@@ -1,0 +1,58 @@
+---
+title: "Temporal Patterns in Police Call Prioritization"
+author: "An Truong"
+format: pdf
+editor: visual
+---
+
+## Date: September 24, 2025
+
+## Abstract
+
+## Introduction
+
+## Data
+
+```{r}
+library(tidyverse)
+library(hms)
+library(usethis)
+use_git_config(user.name = "antruong1101", user.email = "an.truong8@gmail.com")
+```
+
+```{r}
+# download Police Calls 2024 csv file
+pc_2024 <- read.csv('~/Downloads/MATH261A/police_calls_2024.csv')
+```
+
+```{r}
+# Check the original data more thoroughly
+pc_2024_df %>%
+  summarise(
+    total_rows = n(),
+    na_values = sum(is.na(OFFENSE_TIME)),
+    empty_strings = sum(OFFENSE_TIME == "", na.rm = TRUE),
+    unique_values = n_distinct(OFFENSE_TIME, na.rm = TRUE),
+    # Check for whitespace issues
+    has_leading_spaces = sum(str_detect(OFFENSE_TIME, "^\\s"), na.rm = TRUE),
+    has_trailing_spaces = sum(str_detect(OFFENSE_TIME, "\\s$"), na.rm = TRUE)
+  )
+```
+
+```{r}
+pc_2024_df <- pc_2024 %>% 
+  select(PRIORITY, OFFENSE_TIME) %>%
+  mutate(PRIORITY = as.numeric(PRIORITY),
+         OFFENSE_TIME = as_hms(OFFENSE_TIME)) %>%
+  filter(PRIORITY <= 6)
+summary(pc_2024_df)
+```
+
+```{r}
+pc_2024_df %>%
+  count(PRIORITY)
+```
+
+## Methods
+
+## Results
