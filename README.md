@@ -1,15 +1,15 @@
-# MATH261A-project-template
-Example project repository for MATH 261A.
+# MATH261A-Temporal Patterns in Police Call Prioritization
+Project repository for MATH 261A.
 
 ## Data 
 
-**Example statement:** Data used in this project is obtained from [San Francisco Open Data](https://data.sfgov.org) who provide the data under the [Open Data Commons Public Domain Dedication and License](https://opendatacommons.org/licenses/pddl/1-0/).
+Data used in this project is obtained from [San José Open Data](https://data.sanjoseca.gov/) who provide the data under the [Open Data Commons Public Domain Dedication and License](https://opendatacommons.org/licenses/pddl/1-0/).
 
 ## External Resources
 
-**Example statement:** The final report and code were written by [your name], but the following resources were used for preliminary research:
+The final report and code were written by An Truong, but the following resources were used for preliminary research:
 
-* LLM-based chatbots (ex. ChatGPT Edu)
+* LLM-based chatbots (ex. ChatGPT Edu, Claude)
 * Online forums (ex. Stack Overflow).
 
 # Acknowledgments
