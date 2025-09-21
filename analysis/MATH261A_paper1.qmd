@@ -88,13 +88,29 @@ print(priority_freq_hr)
 
 ## Methods
 
+The simple linear regression model with the dependent variable PRIORITY and the independent variable OFFENSE_TIME can be modeled as:
+
+$$
+Y_i = \beta_0 + \beta_1X_i + \epsilon_i
+$$
+
+where:
+
+-   $Y_i$ is the priority code of the i-th call
+
+-   $\beta_0$ is the intercept, the expected priority code when it is midnight (OFFENSE_TIME = 0)
+
+-   $\beta_1$ is the regression coefficient, how much the expected priority code will change as x increases by one hour
+
+-   $X_i$ is the time of day for the i-th call
+
+-   $\epsilon_i$ is the error of estimate
+
 ```{r}
 # linear model does not apply, because cyclical pattern
 priority_lm <- lm(PRIORITY~OFFENSE_TIME, data=pc_2024_df)
 summary(priority_lm)
 ```
-
-## Result
 
 ```{r}
 ggplot(pc_2024_df, aes(x = OFFENSE_TIME, y = PRIORITY)) + 
@@ -106,6 +122,12 @@ ggplot(pc_2024_df, aes(x = OFFENSE_TIME, y = PRIORITY)) +
         plot.subtitle = element_text(hjust = 0.5))
   
 ```
+
+Upon fitting a simple linear regression model in R, we can interpret the coefficients of having an intercept of approximately 3.17 when it is midnight (OFFENSE_TIME = 0) and a slope of approximately 0.0034, which can be interpreted as the increase in the expected priority code for a one hour increase in the day. Although the model suggest significant coefficients with low p-values, observing a low adjusted-$R^2$ value of 0.000294 tells us that the data does not fit the model well. It is more evident when the plot with the regression line is plotted and it can be observed that the regression line is close to 0 and does not explain the data well either.
+
+Since the OFFENSE_TIME is cyclical, it cannot be modeled with a simple linear regression model. The linear nature of the simple regression model could not account for the "wrap-around" from 11 p.m. to 12 a.m.
+
+## Result
 
 ```{r}
 #dim(pc_2024_df)
