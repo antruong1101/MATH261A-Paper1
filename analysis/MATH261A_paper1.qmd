@@ -10,15 +10,31 @@ date: "September 24, 2025"
 
 ## Abstract
 
+The priority of emergency calls to the police can tell a lot about the offense that occurred due to it allowing dispatchers to know how to send and how much personnel. Modeled with time of day can highlight patterns of calls based on their severity and priority. The aim of this paper was to model this relationship with a simple liner regression but it is obvious that the discrete and ordinal nature of the data makes it difficult to be modeled well. Despite these issues, a lot can be learned from how this model doesn't fit by observing the plots that measure the model and its errors.
+
 ## Introduction
 
 Contacting emergency personnel through dialing 911 has allowed direct contact to police, fire, and EMS services in times of critical need. This allows the emergency personnel to quickly be dispatched to provide life-saving services and/or instructions. Once called, data from the call is documented and stored in records that shows information on the call such as date, time, and where an offense took place for example. To rate on how urgent or dire an offense is, priority is rated on a numerical scale to represent this, where one is critical, imminent danger to life and six is a traffic jam. In this paper, the aim is to address the relationship between the priority of an offense and the time of day that the offense occurred.
 
-The goals is to see
+The goals is to see how the time of day can affect the priority of an emergency call. Another way to frame this goal into a question is: "How can understanding temporal patterns improve emergency response times for critical calls?". To address, a simple linear regression model was fitted onto the data from the 2024 Police Calls for Service from the city of San José where the response variable was the priority codes and the explanatory were the time of call made or offense time. To analyze this model, scatter and frequency plots were used to observe the relationship between the two variables. The fit of the linear model was measured by visualizing the residuals of the model using residual vs. fitted values plot, the QQ-plot, and the histogram of the residuals.
+
+Despite prior assumptions being violated prior to modeling the data, it was informative to understand why a simple linear regression model would not be a good fit for the data. It does not make sense to fit a linear regression model to two ordered and discrete variables where offense time is also cyclical due to it measuring the time of day. These issues illustrated why it is better to use other regression models that are better fitting for the data such as an ordinal regression model. In future approaches, modeling two the relationship between two continuous variables would be better fitting for a simple linear regression model.
 
 ## Data
 
-The study uses the Police Calls for Service dataset(s) that comes from the San José Open Data website. In obtaining the variables of interest, the priority code and time of day were extracted as columns, where the offense date was represented in 24-hour time to better represent the time for the simple linear regression model.
+The study uses the Police Calls for Service dataset(s) that comes from the San José Open Data website. In obtaining the variables of interest, the priority code and time of day were extracted as columns, where the offense date was represented in 24-hour time to better represent the time for the simple linear regression model. The priority code is used for "managing calls for service and providing the appropriate response" per the San Jose Police Department Handbook. This each code can be explained as:
+
+1.  Life-threatening emergencies or major felonies in progress requiring immediate city-wide response.
+
+2.  In-progress crimes with injuries/potential injuries where suspect is still in the area, or missing children under 12/at-risk persons.
+
+3.  Recently occurred property crimes where the suspect has likely fled, or cooperative suspects in custody for non-violent crimes.
+
+4.  Non-violent crimes with no immediate danger where the suspect has left and response can be delayed during the shift.
+
+5.  Officer-initiated events observed directly by police ("on-view" activities).
+
+6.  Traffic stops and pedestrian stops initiated by officers.
 
 ```{r, message = FALSE, warning = FALSE}
 
@@ -30,7 +46,7 @@ use_git_config(user.name = "antruong1101", user.email = "an.truong8@gmail.com")
 
 ```{r}
 # download Police Calls 2024 csv file
-setwd('/Users/antruong/Downloads/MATH261A/MATH261A-Paper1/data')
+setwd('/Users/antruong/Downloads/MATH261A/MATH261A-Paper1')
 pc_2024 <- read_csv('police_calls_2024.csv')
 ```
 
@@ -131,7 +147,6 @@ Since the OFFENSE_TIME is cyclical, it cannot be modeled with a simple linear re
 
 ```{r}
 #dim(pc_2024_df)
-
 residuals <- residuals(priority_lm)
 fitted_values <- fitted(priority_lm)
 
@@ -156,4 +171,15 @@ lines(lowess(fitted_values[sample_idx], residuals[sample_idx]),
 res <- residuals(priority_lm)
 qqnorm(res)
 qqline(res, col = 'red')
+
+hist(res, 
+     main = "Histogram of Residuals", 
+     xlab = "Residuals", 
+     col = "lightblue",
+     border = "black",
+     breaks = 20)
 ```
+
+From the simple linear regression model mentioned before, it is obvious that validity fails because a cyclical nature of the independent variable OFFENSE_TIME cannot be modeled linearly. Although the representative assumption can be made for the population of San José, the assumption of additivity and linearity fails due to the relationship between the PRIORITY_CODE and OFFENSE_TIME. From the residual plot above, it can be seen that the error terms are not normally distributed and this can be further shown from the QQ-plot and histogram plot of the residuals that are also shown below. It can be observed the the QQ-plot and the histogram plot do not follow any linear patterns.
+
+Since the simple linear regression model does not fit the data well, it is safe to assume that other regression models such as an ordinal regression model that can model ordered and discrete dependent variables like priority codes and can be tuned further from using the better fitting link function. Another approach that can be done is using the sine-cosine transformation to preserve the cyclical nature of the offense time and introduces two continuous variables that are more interpretable for a model. But since the goal of this paper was to use a simple linear regression model with one explanatory variable, using the sine-cosine transformation would not work out. Despite not being able to use a simple linear regression model for the data and goal of this paper, it was very informative to see the relationship between emergency call priority code and time of day from the frequency plots.
