@@ -4,6 +4,7 @@ author: "An Truong"
 format: pdf
 editor: visual
 date: "September 24, 2025"
+bibliography: "MATH261A_paper1.bib"
 ---
 
 ## Date: September 24, 2025
@@ -22,7 +23,7 @@ Despite prior assumptions being violated prior to modeling the data, it was info
 
 ## Data
 
-The study uses the Police Calls for Service dataset(s) that comes from the San José Open Data website. In obtaining the variables of interest, the priority code and time of day were extracted as columns, where the offense date was represented in 24-hour time to better represent the time for the simple linear regression model. The priority code is used for "managing calls for service and providing the appropriate response" per the San Jose Police Department Handbook. This each code can be explained as:
+The study uses the Police Calls for Service dataset(s) that comes from the San José Open Data website. In obtaining the variables of interest, the priority code and time of day were extracted as columns, where the offense date was represented in 24-hour time to better represent the time for the simple linear regression model. The priority code is used for "managing calls for service and providing the appropriate response" per the San Jose Police Department Handbook. Each code can be explained as:
 
 1.  Life-threatening emergencies or major felonies in progress requiring immediate city-wide response.
 
@@ -37,7 +38,7 @@ The study uses the Police Calls for Service dataset(s) that comes from the San J
 6.  Traffic stops and pedestrian stops initiated by officers.
 
 ```{r, message = FALSE, warning = FALSE}
-
+# install libraries
 library(tidyverse)
 library(hms)
 library(usethis)
@@ -61,7 +62,7 @@ summary(pc_2024_df)
 
 From calculating the frequencies for each priority code and plotting them with time of day we can see the trends for each code throughout the day. The multifaceted bar plots illustrates the frequency of calls for each priority code, where we can see a trend from priority codes 2 and 3 that have a similar distributions in calls. For those two priority codes, we can also see that they hold up as a majority of the calls throughout the day compared to the most critical priority code 1, which has less calls but tend to pick up in the evening to night time from 8 p.m. to 10 p.m.
 
-```{r}
+```{r priority_freq_table}
 # create frequency table
 freq_table <- pc_2024_df %>%
   group_by(OFFENSE_TIME, PRIORITY) %>%
@@ -71,7 +72,7 @@ freq_table <- pc_2024_df %>%
 freq_table$PRIORITY <- as.factor(freq_table$PRIORITY)
 ```
 
-```{r}
+```{r priority_freq_plot_facet}
 priority_freq <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, fill = PRIORITY)) +
   geom_bar(stat = "identity") +
   facet_wrap(~ PRIORITY, ncol = 2, scales = "free_y") +
@@ -86,7 +87,7 @@ print(priority_freq)
 
 ```
 
-```{r}
+```{r priority_freq_plot_all}
 priority_freq_hr <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, color = PRIORITY, group = PRIORITY)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -122,7 +123,7 @@ where:
 
 -   $\epsilon_i$ is the error of estimate
 
-```{r}
+```{r, echo=FALSE, include=FALSE}
 # linear model does not apply, because cyclical pattern
 priority_lm <- lm(PRIORITY~OFFENSE_TIME, data=pc_2024_df)
 summary(priority_lm)
@@ -139,7 +140,7 @@ ggplot(pc_2024_df, aes(x = OFFENSE_TIME, y = PRIORITY)) +
   
 ```
 
-Upon fitting a simple linear regression model in R, we can interpret the coefficients of having an intercept of approximately 3.17 when it is midnight (OFFENSE_TIME = 0) and a slope of approximately 0.0034, which can be interpreted as the increase in the expected priority code for a one hour increase in the day. Although the model suggest significant coefficients with low p-values, observing a low adjusted-$R^2$ value of 0.000294 tells us that the data does not fit the model well. It is more evident when the plot with the regression line is plotted and it can be observed that the regression line is close to 0 and does not explain the data well either.
+Upon fitting a simple linear regression model in R, we can interpret the coefficients of having an intercept of `r round(coefficients(priority_lm)[1], 3)` when it is midnight (OFFENSE_TIME = 0) and a slope `r round(coefficients(priority_lm)['OFFENSE_TIME'], 3)`, which can be interpreted as the increase in the expected priority code for a one hour increase in the day. Although the model suggest significant coefficients with low p-values, observing a low adjusted-$R^2$ value of `r summary(priority_lm)$adj.r.squared` tells us that the data does not fit the model well. It is more evident when the plot with the regression line is plotted and it can be observed that the regression line is close to 0 and does not explain the data well either.
 
 Since the OFFENSE_TIME is cyclical, it cannot be modeled with a simple linear regression model. The linear nature of the simple regression model could not account for the "wrap-around" from 11 p.m. to 12 a.m.
 
