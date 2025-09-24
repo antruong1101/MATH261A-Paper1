@@ -45,13 +45,13 @@ library(usethis)
 use_git_config(user.name = "antruong1101", user.email = "an.truong8@gmail.com")
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo=FALSE}
 # download Police Calls 2024 csv file
 setwd('/Users/antruong/Downloads/MATH261A/MATH261A-Paper1')
 pc_2024 <- read_csv('police_calls_2024.csv')
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo=FALSE}
 pc_2024_df <- pc_2024 %>% 
   select(PRIORITY, OFFENSE_TIME) %>%
   mutate(PRIORITY = as.numeric(PRIORITY),
@@ -62,7 +62,7 @@ summary(pc_2024_df)
 
 From calculating the frequencies for each priority code and plotting them with time of day we can see the trends for each code throughout the day. The multifaceted bar plots illustrates the frequency of calls for each priority code, where we can see a trend from priority codes 2 and 3 that have a similar distributions in calls. For those two priority codes, we can also see that they hold up as a majority of the calls throughout the day compared to the most critical priority code 1, which has less calls but tend to pick up in the evening to night time from 8 p.m. to 10 p.m.
 
-```{r priority_freq_table}
+```{r priority_freq_table, message = FALSE, warning = FALSE, echo=FALSE}
 # create frequency table
 freq_table <- pc_2024_df %>%
   group_by(OFFENSE_TIME, PRIORITY) %>%
@@ -72,7 +72,7 @@ freq_table <- pc_2024_df %>%
 freq_table$PRIORITY <- as.factor(freq_table$PRIORITY)
 ```
 
-```{r priority_freq_plot_facet}
+```{r priority_freq_plot_facet, message = FALSE, warning = FALSE, echo=FALSE}
 priority_freq <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, fill = PRIORITY)) +
   geom_bar(stat = "identity") +
   facet_wrap(~ PRIORITY, ncol = 2, scales = "free_y") +
@@ -87,7 +87,7 @@ print(priority_freq)
 
 ```
 
-```{r priority_freq_plot_all}
+```{r priority_freq_plot_all, message = FALSE, warning = FALSE, echo=FALSE}
 priority_freq_hr <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, color = PRIORITY, group = PRIORITY)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -129,7 +129,7 @@ priority_lm <- lm(PRIORITY~OFFENSE_TIME, data=pc_2024_df)
 summary(priority_lm)
 ```
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo=FALSE}
 ggplot(pc_2024_df, aes(x = OFFENSE_TIME, y = PRIORITY)) + 
   geom_jitter(alpha = 0.6, size = 2, color = 'steelblue', width = 0.2, height = 0.2) +
   #geom_point(alpha = 0.6, size = 2, color = "steelblue") +
@@ -146,7 +146,7 @@ Since the OFFENSE_TIME is cyclical, it cannot be modeled with a simple linear re
 
 ## Result
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo=FALSE}
 #dim(pc_2024_df)
 residuals <- residuals(priority_lm)
 fitted_values <- fitted(priority_lm)
@@ -168,7 +168,7 @@ lines(lowess(fitted_values[sample_idx], residuals[sample_idx]),
       col = 'green', lwd = 2)
 ```
 
-```{r resid_qq_norm_an_histogram}
+```{r resid_qq_norm_an_histogram, message = FALSE, warning = FALSE, echo=FALSE}
 res <- residuals(priority_lm)
 qqnorm(res)
 qqline(res, col = 'red')
@@ -182,6 +182,8 @@ hist(res,
 ```
 
 From the simple linear regression model mentioned before, it is obvious that validity fails because a cyclical nature of the independent variable OFFENSE_TIME cannot be modeled linearly. Although the representative assumption can be made for the population of San José, the assumption of additivity and linearity fails due to the relationship between the PRIORITY_CODE and OFFENSE_TIME. From the residual plot above, it can be seen that the error terms are not normally distributed and this can be further shown from the QQ-plot and histogram plot of the residuals that are also shown below. It can be observed the the QQ-plot and the histogram plot do not follow any linear patterns.
+
+## Discussion
 
 Since the simple linear regression model does not fit the data well, it is safe to assume that other regression models such as an ordinal regression model such as [@ordinal], that can model ordered and discrete dependent variables like priority codes and can be tuned further from using the better fitting link function. Another approach that can be done is using the sine-cosine transformation as seen in [@van_wyk_encoding_nodate] to preserve the cyclical nature of the offense time and introduces two continuous variables that are more interpretable for a model. But since the goal of this paper was to use a simple linear regression model with one explanatory variable, using the sine-cosine transformation would not work out. Despite not being able to use a simple linear regression model for the data and goal of this paper, it was very informative to see the relationship between emergency call priority code and time of day from the frequency plots.
 
