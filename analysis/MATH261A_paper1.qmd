@@ -1,17 +1,21 @@
 ---
 title: "Temporal Patterns in Police Call Prioritization"
 author: "An Truong"
-format: pdf
+thanks: "Project repository available at: [https://github.com/antruong1101/MATH261A-Paper1](https://github.com/antruong1101/MATH261A-Paper1)."
 editor: visual
-date: "September 24, 2025"
+date: today
+date-format: long
+abstract: "The priority of emergency calls to the police can tell a lot about the offense that occurred due to it allowing dispatchers to know who to send and how much personnel is needed. Modeled with time of day can highlight patterns of calls based on their severity and priority. The aim of this paper was to model this relationship with simple liner regression but it is obvious that the discrete and ordinal nature of the data makes it difficult to be modeled well. Despite these issues, a lot can be learned from how this model doesn't fit by observing the plots that measure the model and its errors."
 bibliography: "paper_1.bib"
+format: 
+  pdf:
+    keep-tex: true
+    include-in-header: 
+       text: |
+         \usepackage{fvextra}
+         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+         \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
 ---
-
-## Date: September 24, 2025
-
-## Abstract
-
-The priority of emergency calls to the police can tell a lot about the offense that occurred due to it allowing dispatchers to know who to send and how much personnel is needed. Modeled with time of day can highlight patterns of calls based on their severity and priority. The aim of this paper was to model this relationship with simple liner regression but it is obvious that the discrete and ordinal nature of the data makes it difficult to be modeled well. Despite these issues, a lot can be learned from how this model doesn't fit by observing the plots that measure the model and its errors.
 
 ## Introduction
 
@@ -20,6 +24,8 @@ Contacting emergency personnel through dialing 911 has allowed direct contact to
 The goals is to see how the time of day can affect the priority of an emergency call. Another way to frame this goal into a question is: "How can understanding temporal patterns improve emergency response times for critical calls?". To address this, a simple linear regression model was fitted onto the data from the 2024 Police Calls for Service from the city of San José where the response variable was the priority codes and the explanatory was the time of call made (offense time). When analyzing this model, scatter and frequency plots were used to observe the relationship between the two variables. The fit of the linear model was measured by visualizing the residuals of the model using the residual vs. fitted values plot, the QQ-plot, and the histogram of the residuals.
 
 Despite prior assumptions being violated prior to modeling the data, it was informative to understand why a simple linear regression model would not be a good fit for the data. It does not make sense to fit a linear regression model to two ordered and discrete variables where offense time is also cyclical due to it being measured as the time of day. These issues illustrated why it is better to use other regression models that are better fitting for the data such as an ordinal regression model. In future approaches, modeling the relationship between two continuous variables would be better fitting for a simple linear regression model.
+
+The structure of this paper consist of the **Data** sections that covers the dataset in detail, the **Methods** section that covers the models and statistical methods used to understand and solve the problem of this paper, the **Results** section that describe the fitted models and implications, and the **Discussion** section that points out the implications of the key findings towards the research question.
 
 ## Data
 
@@ -73,6 +79,8 @@ freq_table$PRIORITY <- as.factor(freq_table$PRIORITY)
 ```
 
 ```{r priority_freq_plot_facet, message = FALSE, warning = FALSE, echo=FALSE}
+#| label: fig-facet-freq-plot
+#| fig-cap: "Faceted Frequency Plot of Police Calls by Priority Code"
 priority_freq <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, fill = PRIORITY)) +
   geom_bar(stat = "identity") +
   facet_wrap(~ PRIORITY, ncol = 2, scales = "free_y") +
@@ -84,10 +92,11 @@ priority_freq <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, fill = PRIO
   theme(legend.position = "none")
 
 print(priority_freq)
-
 ```
 
 ```{r priority_freq_plot_all, message = FALSE, warning = FALSE, echo=FALSE}
+#| label: fig-group-freq-plot
+#| fig-cap: "Grouped Frequency Line Plot of Priority Codes by Time of Day"
 priority_freq_hr <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, color = PRIORITY, group = PRIORITY)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -105,7 +114,7 @@ print(priority_freq_hr)
 
 ## Methods
 
-The simple linear regression model with the dependent variable PRIORITY and the independent variable OFFENSE_TIME can be modeled as:
+The simple linear regression model with the dependent variable `PRIORITY` and the independent variable `OFFENSE_TIME` can be modeled as:
 
 $$
 Y_i = \beta_0 + \beta_1X_i + \epsilon_i
@@ -115,7 +124,7 @@ where:
 
 -   $Y_i$ is the priority code of the i-th call
 
--   $\beta_0$ is the intercept, the expected priority code when it is midnight (OFFENSE_TIME = 0)
+-   $\beta_0$ is the intercept, the expected priority code when it is midnight (`OFFENSE_TIME` = 0)
 
 -   $\beta_1$ is the regression coefficient, how much the expected priority code will change as x increases by one hour
 
@@ -130,6 +139,9 @@ summary(priority_lm)
 ```
 
 ```{r, message = FALSE, warning = FALSE, echo=FALSE}
+#| label: fig-lm-scatter
+#| fig-cap: "Jittered Scatterplot of Offense Priority on Offense Time"
+
 ggplot(pc_2024_df, aes(x = OFFENSE_TIME, y = PRIORITY)) + 
   geom_jitter(alpha = 0.6, size = 2, color = 'steelblue', width = 0.2, height = 0.2) +
   #geom_point(alpha = 0.6, size = 2, color = "steelblue") +
@@ -140,14 +152,17 @@ ggplot(pc_2024_df, aes(x = OFFENSE_TIME, y = PRIORITY)) +
   
 ```
 
-Upon fitting a simple linear regression model in R, we can interpret the coefficients of having an intercept of `r round(coefficients(priority_lm)[1], 3)` when it is midnight (OFFENSE_TIME = 0) and a slope `r round(coefficients(priority_lm)['OFFENSE_TIME'], 3)`, which can be interpreted as the increase in the expected priority code for a one hour increase in the day. Although the model suggest significant coefficients with low p-values, observing a low adjusted-$R^2$ value of `r summary(priority_lm)$adj.r.squared` tells us that the data does not fit the model well. It is more evident when the plot with the regression line is plotted and it can be observed that the regression line is close to 0 and does not explain the data well either.
+Upon fitting a simple linear regression model in R, we can interpret the coefficients of having an intercept of `r round(coefficients(priority_lm)[1], 3)` when it is midnight (`OFFENSE_TIME` = 0) and a slope `r round(coefficients(priority_lm)['OFFENSE_TIME'], 3)`, which can be interpreted as the increase in the expected priority code for a one hour increase in the day. Although the model suggest significant coefficients with low p-values, observing a low adjusted-$R^2$ value of `r summary(priority_lm)$adj.r.squared` tells us that the data does not fit the model well. It is more evident when the plot with the regression line is plotted and it can be observed that the regression line is close to 0 and does not explain the data well either.
 
-Since the OFFENSE_TIME is cyclical, it cannot be modeled with a simple linear regression model. The linear nature of the simple regression model could not account for the "wrap-around" from 11 p.m. to 12 a.m.
+Since the `OFFENSE_TIME` is cyclical, it cannot be modeled with a simple linear regression model. The linear nature of the simple regression model could not account for the "wrap-around" from 11 p.m. to 12 a.m.
 
-## Result
+## Results
 
 ```{r, message = FALSE, warning = FALSE, echo=FALSE}
+#| label: fig-resid-plot
+#| fig-cap: "Residual vs. Fitted Values Plot"
 #dim(pc_2024_df)
+
 residuals <- residuals(priority_lm)
 fitted_values <- fitted(priority_lm)
 
@@ -169,9 +184,17 @@ lines(lowess(fitted_values[sample_idx], residuals[sample_idx]),
 ```
 
 ```{r resid_qq_norm_an_histogram, message = FALSE, warning = FALSE, echo=FALSE}
+#| label: fig-qq-plot
+#| fig-cap: "Q-Q Plot"
+
 res <- residuals(priority_lm)
 qqnorm(res)
 qqline(res, col = 'red')
+```
+
+```{r resid_hist, message = FALSE, warning = FALSE, echo=FALSE}
+#| label: fig-resid-hist
+#| fig-cap: "Histogram of Residuals"
 
 hist(res, 
      main = "Histogram of Residuals", 
@@ -181,7 +204,7 @@ hist(res,
      breaks = 20)
 ```
 
-From the simple linear regression model mentioned before, it is obvious that validity fails because a cyclical nature of the independent variable OFFENSE_TIME cannot be modeled linearly. Although the representative assumption can be made for the population of San José, the assumption of additivity and linearity fails due to the relationship between the PRIORITY_CODE and OFFENSE_TIME. From the residual plot above, it can be seen that the error terms are not normally distributed and this can be further shown from the QQ-plot and histogram plot of the residuals that are also shown below. It can be observed the the QQ-plot and the histogram plot do not follow any linear patterns.
+From the simple linear regression model mentioned before, it is obvious that validity fails because a cyclical nature of the independent variable `OFFENSE_TIME` cannot be modeled linearly. Although the representative assumption can be made for the population of San José, the assumption of additivity and linearity fails due to the relationship between the `PRIORITY_CODE` and `OFFENSE_TIME`. From the residual plot above, it can be seen that the error terms are not normally distributed and this can be further shown from the QQ-plot and histogram plot of the residuals that are also shown below. It can be observed the the QQ-plot and the histogram plot do not follow any linear patterns.
 
 ## Discussion
 
