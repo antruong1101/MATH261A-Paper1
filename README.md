@@ -1,5 +1,6 @@
 # MATH261A-Temporal Patterns in Police Call Prioritization
 Project repository for MATH 261A.
+Due date: October 8th, 2025
 
 ## Data 
 
@@ -9,7 +10,7 @@ Data used in this project is obtained from [San José Open Data](https://data.sa
 
 The final report and code were written by An Truong, but the following resources were used for preliminary research:
 
-* LLM-based chatbots (ex. ChatGPT Edu, Claude)
+* LLM-based chatbots (ex. ChatGPT Edu, Claude) for various plots. 
 * Online forums (ex. Stack Overflow).
 
 # Acknowledgments
