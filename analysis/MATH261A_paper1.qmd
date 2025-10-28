@@ -97,7 +97,7 @@ print(priority_freq)
 
 ```{r priority_freq_plot_all, message = FALSE, warning = FALSE, echo=FALSE}
 #| label: fig-group-freq-plot
-#| fig-cap: "Grouped Frequency Line Plot of Priority Codes by Time of Day"
+#| fig-cap: "Grouped Frequency Line Plot of Priority Codes(1-6) by Time of Day(24HR)"
 priority_freq_hr <- ggplot(freq_table, aes(x = OFFENSE_TIME, y = count, color = PRIORITY, group = PRIORITY)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
@@ -141,7 +141,7 @@ summary(priority_lm)
 
 ```{r, message = FALSE, warning = FALSE, echo=FALSE}
 #| label: fig-lm-scatter
-#| fig-cap: "Jittered Scatterplot of Offense Priority on Offense Time"
+#| fig-cap: "Jittered Scatterplot of Offense Priority(1-6) on Offense Time(24HR)"
 
 ggplot(pc_2024_df, aes(x = OFFENSE_TIME, y = PRIORITY)) + 
   geom_jitter(alpha = 0.6, size = 2, color = 'steelblue', width = 0.2, height = 0.2) +
@@ -161,7 +161,7 @@ Since the `OFFENSE_TIME` is cyclical, it cannot be modeled with a simple linear 
 
 ```{r, message = FALSE, warning = FALSE, echo=FALSE}
 #| label: fig-resid-plot
-#| fig-cap: "Residual vs. Fitted Values Plot"
+#| fig-cap: "Residual diagnostic for the `PRIORITY~OFFENSE_TIME` model. The plot indicates a pattern that suggests that a simple linear model is not a good fit for the data."
 #dim(pc_2024_df)
 
 residuals <- residuals(priority_lm)
@@ -177,7 +177,7 @@ plot(fitted_values[sample_idx], residuals[sample_idx],
      col = alpha('blue', 0.6),
      xlab = 'Fitted Values',
      ylab = 'Residuals',
-     main = 'Residual Plot')
+     main = 'Residual vs. Fitted Plot')
 abline(h = 0, col = 'red', lty = 2, lwd = 2)
 
 lines(lowess(fitted_values[sample_idx], residuals[sample_idx]),
