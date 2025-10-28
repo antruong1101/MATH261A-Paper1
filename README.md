@@ -4,7 +4,7 @@ Due date: October 8th, 2025
 
 ## Data 
 
-Data used in this project is obtained from [San José Open Data](https://data.sanjoseca.gov/) who provide the data under the [Open Data Commons Public Domain Dedication and License](https://opendatacommons.org/licenses/pddl/1-0/).
+Data used in this project is obtained from [San José Open Data](https://data.sanjoseca.gov/) who provided the data under the [Open Data Commons Public Domain Dedication and License](https://opendatacommons.org/licenses/pddl/1-0/).
 
 ## Structure 
 All of the files done in this project are in the analysis file which contains the pdf, quarto, and tex files. 
